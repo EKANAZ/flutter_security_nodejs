@@ -10,7 +10,7 @@ const register_middlewares = [
   body('password').isLength({ min: 4, max: 30 }).withMessage('Password must be between 4 and 30 characters'),
   body('user_name').isLength({ min: 4, max: 20 }).withMessage('Username must be between 4 and 20 characters'),
   check('user_name').custom(async value => {
-    const user = await require('../models/User').findOne({ user_name: value });
+    const user = await require('../models/Users').findOne({ user_name: value });
     if (user) throw new Error('Username already exists');
   }),
 ];
