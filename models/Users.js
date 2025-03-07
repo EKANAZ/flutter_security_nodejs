@@ -7,8 +7,6 @@ const userSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   user_name: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  feedback: { type: String },
-
   role: { type: String, enum: ['admin', 'customer'], required: true },
   createdAt: { type: Date, default: Date.now },
 });
@@ -19,9 +17,6 @@ userSchema.pre('save', async function (next) {
   }
   next();
 });
-
-
-
 
 userSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
