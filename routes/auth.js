@@ -31,26 +31,25 @@ initializeAdmin();
 
 router.post('/register', authMiddleware, register_middlewares, async (req, res) => {
     if (req.user.role !== 'admin') {
-        console.log('Unauthorized attempt to register:', { userId: req.user.id, role: req.user.role });
-        return res.status(403).json({ error: 'Only admins can register users' });
+      return res.status(403).json({ error: 'Only admins can register users' });
     }
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log('Validation errors in /auth/register:', errors.array());
-        return res.status(400).json({ errors: errors.array() });
+      console.log('Validation errors in /auth/register:', errors.array());
+      return res.status(400).json({ errors: errors.array() });
     }
-    const { name, email, phone, user_name, password, role } = req.body;
+    const { name, email, phone, user_name, password } = req.body;
     try {
-        const user = new User({ name, email, phone, user_name, password, role: role === 'admin' ? 'admin' : 'customer' });
-        await user.save();
-        const accessToken = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        res.status(201).json({ accessToken, refreshToken });
+      const user = new User({ name, email, phone, user_name, password, role: 'customer' });
+      await user.save();
+      const accessToken = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const refreshToken = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
+      res.status(201).json({ accessToken, refreshToken });
     } catch (error) {
-        console.log('Error in /auth/register:', { message: error.message, stack: error.stack, requestBody: req.body });
-        res.status(500).json({ error: error.message });
+      console.log('Error in /auth/register:', { message: error.message, stack: error.stack });
+      res.status(500).json({ error: error.message });
     }
-});
+  });
 
 router.post('/login', login_middlewares, async (req, res) => {
     const errors = validationResult(req);

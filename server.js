@@ -7,7 +7,7 @@ const authRoutes = require('./routes/auth');
 const feedbackRoutes = require('./routes/feedback');
 const path = require('path');
 const fs = require('fs'); // Add this to check file existence
-
+// app.use('/uploads', express.static('uploads'));
 const app = express();
 let port = process.env.PORT || 3000;
 
