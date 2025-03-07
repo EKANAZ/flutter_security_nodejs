@@ -84,8 +84,8 @@ router.post('/oauth-login', async (req, res) => {
         name: decodedToken.name || 'OAuth User',
         email,
         phone: 'N/A',
-        user_name: email.split('@')[0],
-        password: 'oauth_' + Math.random().toString(36).slice(2),
+        user_name: email,
+        password: '1234',
         role: 'customer',
       });
       await user.save();
