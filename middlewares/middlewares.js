@@ -27,7 +27,7 @@ const feedback_middlewares = [
   body('name').notEmpty().withMessage('Name is required'),
   body('email').notEmpty().isEmail().withMessage('Valid email is required'),
   body('phoneNumber').notEmpty().withMessage('Phone number is required'),
-  body('feedback').notEmpty().withMessage('Feedback is required'),
+  // body('feedback').notEmpty().withMessage('Feedback is required'),
 ];
 
 module.exports = { register_middlewares, login_middlewares, feedback_middlewares };
