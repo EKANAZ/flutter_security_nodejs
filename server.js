@@ -4,10 +4,11 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const admin = require('firebase-admin');
 const authRoutes = require('./routes/auth');
-const feedbackRoutes = require('./routes/feedback');
+const productRoutes = require('./routes/products');
+const orderRoutes = require('./routes/orders');
 const path = require('path');
-const fs = require('fs'); // Add this to check file existence
-// app.use('/uploads', express.static('uploads'));
+const fs = require('fs');
+
 const app = express();
 let port = process.env.PORT || 3000;
 
@@ -34,27 +35,31 @@ try {
     process.exit(1);
 }
 
+// Middleware
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads')); // Serve static files for product images
 
+// MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, {
     serverSelectionTimeoutMS: 30000,
     socketTimeoutMS: 45000,
 }).then(() => {
     console.log('MongoDB connected successfully to:', process.env.MONGODB_URI);
+    // Routes
     app.use('/auth', authRoutes);
-    app.use('/feedback', feedbackRoutes);
+    app.use('/products', productRoutes);
+    app.use('/orders', orderRoutes);
     startServer(port);
 }).catch(err => {
     console.log('MongoDB connection failed:', { message: err.message, stack: err.stack });
     process.exit(1);
 });
 
+// Server Start Function with Port Retry Logic
 function startServer(port) {
-    // Convert port to a number to ensure proper addition
-    port = Number(port);
+    port = Number(port); // Ensure port is a number
     
-    // Check if port is valid
     if (port >= 65536) {
         console.error('No available ports found under 65536');
         process.exit(1);
@@ -68,6 +73,7 @@ function startServer(port) {
             startServer(port + 1);
         } else {
             console.log('Server error:', { message: err.message, stack: err.stack });
+            process.exit(1);
         }
     });
 }
